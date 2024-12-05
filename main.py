@@ -106,7 +106,7 @@ async def scrape_category(session: aiohttp.ClientSession, category: str, max_pro
         # Extract product hrefs from the current page
         hrefs = [tag.get('href') for tag in product_tags if tag.get('href')]
         
-        # Define a coroutine to fetch and process a single product page
+        # fetch and process a single product page
         async def fetch_and_process(href: str, idx: int):
             product_response = await get_responses(href, session)
             product_soup = get_soup(product_response)
@@ -137,7 +137,7 @@ async def scrape_category(session: aiohttp.ClientSession, category: str, max_pro
                 if "data-role" in d.text:
                     try:
                         json_data = json.loads(d.text)
-                        break  # Exit the loop early once data is found
+                        break  
                     except json.JSONDecodeError as e:
                         logging.error(f"JSON decoding error in data tag for product page {idx} on page {page}: {e}")
             
@@ -219,7 +219,6 @@ if __name__ == "__main__":
     # Run the main function with the list of categories
     scraped_data = asyncio.run(main(CATEGORIES))
     
-    # Optionally, save the scraped data to a JSON file
     with open(SCRAPE_METADATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(scraped_data, f, ensure_ascii=False, indent=4)
     
